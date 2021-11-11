@@ -54,8 +54,7 @@ def help(update: Update, context: CallbackContext):
 
 
 def start(update: Update, context: CallbackContext):
-    user_data = update.effective_user
-    user = User(user_data.id, user_data.username, user_data.first_name, user_data.last_name)
+    user = db_manager.get_user_by_tg(update.effective_user)
     db_manager.register(user)
     text = "Привествую вас!\nЗдесь вы сможете найти практически любую песню, для игры на гитаре.\n" \
            "@Все песни берутся с ресурса amdm.ru"
@@ -65,7 +64,7 @@ def start(update: Update, context: CallbackContext):
 
 
 def close(update: Update, context: CallbackContext):
-    user = db_manager.get_user_by_tg_id(update.effective_user.id)
+    user = db_manager.get_user_by_tg(update.effective_user)
 
     for chord_id in user.last_send_chords.split(' '):
         try:
@@ -79,7 +78,7 @@ def close(update: Update, context: CallbackContext):
 
 def popular(func):
     def wrapper(update: Update, context: CallbackContext):
-        user = db_manager.get_user_by_tg_id(update.effective_user.id)
+        user = db_manager.get_user_by_tg(update.effective_user)
         user.status = 1
         user.offset = 0
         db_manager.register(user)
@@ -122,7 +121,7 @@ def popular_all():
 
 
 def search(update: Update, context: CallbackContext):
-    user = db_manager.get_user_by_tg_id(update.effective_user.id)
+    user = db_manager.get_user_by_tg(update.effective_user)
     user.status = 1
     user.offset = 0
     db_manager.register(user)
@@ -135,7 +134,7 @@ def search(update: Update, context: CallbackContext):
 
 
 def search_songs(update: Update, context: CallbackContext):
-    user = db_manager.get_user_by_tg_id(update.effective_user.id)
+    user = db_manager.get_user_by_tg(update.effective_user)
     message_bot = context.bot.send_message(user.tg_id, text='Пожалуйста, подождите. Идет поиск...')
 
     message = Message(update.message.text, update.message.message_id, user.id)
@@ -161,7 +160,7 @@ def search_songs(update: Update, context: CallbackContext):
 
 
 def favorites(update: Update, context: CallbackContext):
-    user = db_manager.get_user_by_tg_id(update.effective_user.id)
+    user = db_manager.get_user_by_tg(update.effective_user)
     user.status = 2
     user.offset = 0
     db_manager.register(user)
@@ -178,7 +177,7 @@ def favorites(update: Update, context: CallbackContext):
 
 
 def add_favorites(update: Update, context: CallbackContext):
-    user = db_manager.get_user_by_tg_id(update.effective_user.id)
+    user = db_manager.get_user_by_tg(update.effective_user)
 
     query = update.callback_query
     song_id = query.data.split('_')[1]
@@ -194,7 +193,7 @@ def add_favorites(update: Update, context: CallbackContext):
 
 def get_song(func):
     def wrapper(update: Update, context: CallbackContext):
-        user = db_manager.get_user_by_tg_id(update.effective_user.id)
+        user = db_manager.get_user_by_tg(update.effective_user)
         try:
             song_num = int(update.message.text)
         except ValueError:

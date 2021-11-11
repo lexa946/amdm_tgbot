@@ -12,7 +12,7 @@ from config.models import User, Song
 
 def paginate_song_decor(func):
     def wrapper(update: Update, context: CallbackContext):
-        user = db_manager.get_user_by_tg_id(update.effective_user.id)
+        user = db_manager.get_user_by_tg(update.effective_user)
         if user.status == 1:
             with open(os.path.join('.', 'cache', f'{user.id}_{user.tg_id}_{user.username}_last_dump'), 'rb') as file:
                 songs = pickle.load(file)
