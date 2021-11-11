@@ -190,6 +190,21 @@ def add_favorites(update: Update, context: CallbackContext):
         db_manager.register(user)
         query.answer('Добавлено в избранное')
 
+def remove_favorites(update: Update, context: CallbackContext):
+    user = db_manager.get_user_by_tg(update.effective_user)
+
+    query = update.callback_query
+    song_id = query.data.split('_')[1]
+    song = db_manager.get_song_by_id(song_id)
+
+    if song in user.favorites:
+        user.favorites.remove(song)
+        db_manager.register(user)
+        query.answer('Удалено из избранного')
+    else:
+        query.answer('Уже удалено')
+
+
 
 def get_song(func):
     def wrapper(update: Update, context: CallbackContext):
@@ -271,11 +286,15 @@ def get_search_song(user: User, song_num: int):
 
 @get_song
 def get_favorite_song(user: User, song_num: int):
-    keyboard = [[InlineKeyboardButton('Закрыть', callback_data='close')]]
+
+    keyboard = []
     try:
         song = user.favorites[song_num]
     except IndexError:
         return None, keyboard
+
+    keyboard.append([InlineKeyboardButton('Удалить из избранного', callback_data=f'remove_{song.id}')])
+    keyboard.append([InlineKeyboardButton('Закрыть', callback_data='close')])
     return song, keyboard
 
 
@@ -324,6 +343,7 @@ if __name__ == '__main__':
     dispatcher.add_handler(CallbackQueryHandler(next_songs, pattern='^next_songs$'))
     dispatcher.add_handler(CallbackQueryHandler(previous_songs, pattern='^previous_songs$'))
     dispatcher.add_handler(CallbackQueryHandler(add_favorites, pattern='^like_'))
+    dispatcher.add_handler(CallbackQueryHandler(remove_favorites, pattern='^remove_'))
     dispatcher.add_handler(CallbackQueryHandler(close, pattern='close'))
 
     updater.start_polling()
