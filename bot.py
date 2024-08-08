@@ -16,7 +16,7 @@ from config.paginate_song import next_songs, previous_songs
 
 from amdm import AmdmManager
 
-token = "2085210028:AAEEtPjVfAOsU3qGAq0fvvZwyRYDOU44twk"
+token = ""
 logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s', level=logging.INFO)
 
 amdm_manager = AmdmManager()
@@ -42,7 +42,6 @@ def main_menu(update: Update, context: CallbackContext):
     else:
         context.bot.send_message(update.effective_chat.id, 'Главное меню', parse_mode='html',
                                  reply_markup=markup)
-
 
 
 def help(update: Update, context: CallbackContext):
@@ -71,9 +70,11 @@ def close(update: Update, context: CallbackContext):
             context.bot.delete_message(user.tg_id, chord_id)
         except BadRequest:
             continue
-
     query = update.callback_query
-    query.delete_message()
+    try:
+        query.delete_message()
+    except BadRequest:
+        query.answer('Не удалось закрыть. Попробуйте вызвать /menu')
 
 
 def popular(func):
@@ -190,6 +191,7 @@ def add_favorites(update: Update, context: CallbackContext):
         db_manager.register(user)
         query.answer('Добавлено в избранное')
 
+
 def remove_favorites(update: Update, context: CallbackContext):
     user = db_manager.get_user_by_tg(update.effective_user)
 
@@ -203,7 +205,6 @@ def remove_favorites(update: Update, context: CallbackContext):
         query.answer('Удалено из избранного')
     else:
         query.answer('Уже удалено')
-
 
 
 def get_song(func):
@@ -286,7 +287,6 @@ def get_search_song(user: User, song_num: int):
 
 @get_song
 def get_favorite_song(user: User, song_num: int):
-
     keyboard = []
     try:
         song = user.favorites[song_num]
