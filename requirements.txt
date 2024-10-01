@@ -1,0 +1,10 @@
+requests
+sqlalchemy
+python-telegram-bot==13.6
+alembic
+pydantic
+pydantic_settings
+beautifulsoup4
+psycopg2
+urllib3==1.26.15
+lxml

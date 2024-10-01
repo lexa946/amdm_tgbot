@@ -5,14 +5,14 @@ import pickle
 from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup
 from telegram.ext import CallbackContext
 
-from config.dbmanager import db_manager
-from config.helpers import send_songs
-from config.models import User, Song
+from app.dbmanager import DbManager
+from app.helpers import send_songs
+from app.models import User, Song
 
 
 def paginate_song_decor(func):
     def wrapper(update: Update, context: CallbackContext):
-        user = db_manager.get_user_by_tg(update.effective_user)
+        user = DbManager.get_user_by_tg(update.effective_user)
         if user.status == 1:
             with open(os.path.join('.', 'cache', f'{user.id}_{user.tg_id}_{user.username}_last_dump'), 'rb') as file:
                 songs = pickle.load(file)
@@ -33,7 +33,7 @@ def paginate_song_decor(func):
 @paginate_song_decor
 def next_songs(user: User, songs: [Song]):
     user.offset += 10
-    db_manager.register(user)
+    DbManager.register(user)
 
     if len(songs) < user.offset + 10:
         songs = songs[user.offset:]
@@ -53,7 +53,7 @@ def next_songs(user: User, songs: [Song]):
 def previous_songs(user: User, songs: [Song]):
     if user.offset != 0:
         user.offset -= 10
-    db_manager.register(user)
+    DbManager.register(user)
 
     if user.offset == 0:
         songs = songs[:user.offset + 10]

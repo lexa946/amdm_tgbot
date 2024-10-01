@@ -1,17 +1,17 @@
 import requests
 from bs4 import BeautifulSoup
 
-from config.song import Song
-from config.helpers import USER_AGENT
+from app.models import Song
+from app.helpers import USER_AGENT
+from app.config import settings
 
 
 class AmdmManager:
     def __init__(self):
-        self.main_url = "https://amdm.ru"
+        self.main_url = settings.MAIN_URL_AMDM
         self.headers = {
             "user-agent": USER_AGENT,
         }
-
 
     def find_songs(self, name_song: str):
         url_template = f"{self.main_url}/search/page" + "{0}/"
@@ -49,11 +49,10 @@ class AmdmManager:
         soup = BeautifulSoup(html, 'lxml')
 
         for row in soup.select('table.items>tr td:last-child'):
-            song = Song(
-                row.select_one("a:first-child").text,
-                row.select_one("a:nth-child(2)").text,
-                row.select_one("a:nth-child(2)").attrs['href'],
-                row.select_one("a:first-child").attrs['href'],
-            )
+            artist = row.select_one("a:first-child").text
+            name = row.select_one("a:nth-child(2)").text
+            url = row.select_one("a:nth-child(2)").attrs['href']
+            artist_url = row.select_one("a:first-child").attrs['href']
+            song = Song(url, artist, artist_url, name, None, [])
             songs.append(song)
         return songs

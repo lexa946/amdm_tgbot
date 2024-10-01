@@ -3,7 +3,7 @@ import webbrowser
 
 import requests
 
-from config.helpers import USER_AGENT
+from app.helpers import USER_AGENT
 
 class Chord:
     def __init__(self, name: str, url: str):

@@ -1,5 +1,8 @@
 test.py
 .idea
-/cache/
+
 base.db
 /venv/
+.venv
+.env
+cache/*
