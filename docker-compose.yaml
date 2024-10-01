@@ -1,0 +1,6 @@
+version: "3"
+
+services:
+  bot:
+    restart: always
+    image: amdm_bot:latest
