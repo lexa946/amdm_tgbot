@@ -1,6 +1,8 @@
 FROM python:3.11-slim
 
-COPY . .
+COPY app ./app
+COPY requirements.txt requirements.txt
+COPY *.py ./
 
 RUN python -m pip install --upgrade pip && pip install -r requirements.txt
 

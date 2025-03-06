@@ -35,7 +35,7 @@ class AmdmManager:
         songs = []
         while True:
             url = url_template.format(page_counter)
-            response = requests.get(url, params=params, headers=self.headers)
+            response = requests.get(url, params=params, headers=self.headers, verify=False)
             songs_temp = self.__get_songs_from_page(response.text)
             if not songs_temp:
                 break

@@ -101,7 +101,7 @@ class Song(Base):
     def __html_full_page_exist(self):
         if not self.__html_full_page:
             response = requests.get(
-                self.url, headers={'user-agent': USER_AGENT}
+                self.url, headers={'user-agent': USER_AGENT}, verify=False
             )
             self.__html_full_page = response.text
 
