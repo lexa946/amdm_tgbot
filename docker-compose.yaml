@@ -8,3 +8,4 @@ services:
     volumes:
       - ./.env:/.env
       - ./cache:/cache
+      - ./songs:/songs
