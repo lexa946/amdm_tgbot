@@ -6,4 +6,4 @@ services:
     restart: unless-stopped
     image: amdm_bot:latest
     volumes:
-      - ./.env:./.env
+      - ./.env:/.env
