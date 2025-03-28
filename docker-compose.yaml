@@ -7,3 +7,4 @@ services:
     image: amdm_bot:latest
     volumes:
       - ./.env:/.env
+      - ./cache:/cache
